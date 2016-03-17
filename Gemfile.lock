@@ -44,6 +44,7 @@ GEM
       tzinfo (~> 1.1)
     arel (6.0.3)
     builder (3.2.2)
+    byebug (8.2.0)
     concurrent-ruby (1.0.1)
     diff-lcs (1.2.5)
     erubis (2.7.0)
@@ -122,6 +123,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  byebug
   govuk_elements_form_builder!
   rspec-rails
   sqlite3

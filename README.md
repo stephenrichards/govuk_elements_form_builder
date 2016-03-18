@@ -24,6 +24,18 @@ Or install it yourself as:
 
 TODO: Write usage instructions here
 
+###Locales
+
+Label text can be specified through the use of locale files as given below: 
+
+```
+en:
+  helpers:
+    label:
+      person:
+        name: Full name
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

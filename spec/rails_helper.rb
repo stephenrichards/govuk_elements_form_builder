@@ -2,7 +2,6 @@
 ENV['RAILS_ENV'] ||= 'test'
 require 'spec_helper'
 require File.expand_path('../../spec/dummy/config/environment', __FILE__)
-require File.expand_path('../../lib/govuk_elements_form_builder', __FILE__)
 require 'rspec/rails'
 require 'byebug'
 # Add additional requires below this line. Rails is not loaded until this point!

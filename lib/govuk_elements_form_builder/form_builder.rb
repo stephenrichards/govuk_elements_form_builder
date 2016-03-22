@@ -5,14 +5,9 @@ module GovukElementsFormBuilder
         options = arg.extract_options!
 
         label_class = ["form-label"]
-        if options[:label].present?
-          label_class << options[:label][:class] if options[:label][:class].present?
-        end
 
         text_field_class = ["form-control"]
-        if options[:class].present?
-          text_field_class << options[:class] if options[:class].present?
-        end
+
         options[:class] = text_field_class
 
         label(name, class: label_class) + super(name, options.except(:label))

@@ -1,5 +1,7 @@
 .bundle/
 .byebug_history
+#ignore the gemfile for travis
+Gemfile.lock
 log/*.log
 pkg/
 spec/dummy/db/*.sqlite3

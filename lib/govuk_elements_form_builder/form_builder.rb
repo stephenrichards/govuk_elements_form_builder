@@ -1,7 +1,9 @@
 module GovukElementsFormBuilder
   class FormBuilder < ActionView::Helpers::FormBuilder
+    delegate :content_tag, :tag, to: :@template
+
     def text_field(name, *arg)
-      @template.content_tag :div, class: 'form-group' do
+      content_tag :div, class: 'form-group' do
         options = arg.extract_options!
         text_field_class = ["form-control"]
         options[:class] = text_field_class
@@ -16,7 +18,7 @@ module GovukElementsFormBuilder
 
     def add_hint label, name
       if hint = hint_text(name)
-        hint_span = @template.content_tag(:span, hint, class: 'form-hint')
+        hint_span = content_tag(:span, hint, class: 'form-hint')
         label.sub!('</label>', hint_span + '</label>'.html_safe)
       end
     end

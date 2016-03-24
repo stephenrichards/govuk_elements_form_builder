@@ -13,6 +13,8 @@ gemspec
 # To use a debugger
 # gem 'byebug', group: [:development, :test]
 
-version = ENV["RAILS_VERSION"] || "4.2"
+#version = ENV["RAILS_VERSION"] || "4.2"
 
-eval_gemfile File.expand_path("../gemfiles/#{version}.gemfile", __FILE__)
+#puts "../gemfiles/Gemfile.rails-#{version}"
+
+#eval_gemfile File.expand_path("../gemfiles/Gemfile.rails-#{version}", __FILE__)

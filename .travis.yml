@@ -1,8 +1,8 @@
 language: ruby
 rvm:
  - "2.3.0"
-env:
-  - "RAILS_VERSION=4.0"
-  - "RAILS_VERSION=4.1"
-  - "RAILS_VERSION=4.2"
-script: bundle exec rspec spec
+gemfile:
+  - gemfiles/Gemfile.rails-2.3.x
+  - gemfiles/Gemfile.rails-3.0.x
+  - gemfiles/Gemfile.rails-3.1.x
+script: bundle exec rspec

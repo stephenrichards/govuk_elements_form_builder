@@ -2,7 +2,9 @@ language: ruby
 rvm:
  - "2.3.0"
 gemfile:
-  - gemfiles/Gemfile.rails-4.0
-  - gemfiles/Gemfile.rails-4.1
-  - gemfiles/Gemfile.rails-4.2
+  - gemfiles/Gemfile.rails-4-0-stable
+  - gemfiles/Gemfile.rails-4-1-stable
+  - gemfiles/Gemfile.rails-4-2-stable
+  - gemfiles/Gemfile.rails-5-0-beta
+  - Gemfile
 script: bundle exec rspec spec

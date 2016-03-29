@@ -1,8 +1,9 @@
 module GovukElementsFormBuilder
   class FormBuilder < ActionView::Helpers::FormBuilder
+
     delegate :content_tag, :tag, to: :@template
 
-    %w[text_field email_field].each do |method_name|
+    %w[text_field email_field password_field].each do |method_name|
       define_method(method_name) do |name, *args |
         content_tag :div, class: 'form-group' do
           options = args.extract_options!
@@ -28,6 +29,5 @@ module GovukElementsFormBuilder
     def hint_text name
       I18n.t("#{object_name}.#{name}", default: "", scope: 'helpers.hint').presence
     end
-
   end
 end

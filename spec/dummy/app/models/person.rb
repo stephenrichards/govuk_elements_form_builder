@@ -7,5 +7,7 @@ class Person
   attr_accessor :ni_number
   attr_accessor :email_work
   attr_accessor :email_home
+  attr_accessor :password
+  attr_accessor :password_confirmation
 
 end

@@ -50,4 +50,66 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
     end
   end
 
+  describe '#email_field' do
+    it 'outputs label and input wrapped in div' do
+      output = builder.email_field :email_work
+      expect_equal output, [
+        '<div class="form-group">',
+        '<label class="form-label" for="person_email_work">',
+        'Work email address',
+        '</label>',
+        '<input class="form-control" type="email" name="person[email_work]" id="person_email_work" />',
+        '</div>'
+      ]
+    end
+
+    context 'when hint text provided' do
+      it 'outputs hint text in span inside label' do
+        output = builder.email_field :email_home
+        expect_equal output, [
+          '<div class="form-group">',
+          '<label class="form-label" for="person_email_home">',
+          'Home email address',
+          '<span class="form-hint">',
+          'For eg. John.Smith@example.com',
+          '</span>',
+          '</label>',
+          '<input class="form-control" type="email" name="person[email_home]" id="person_email_home" />',
+          '</div>'
+        ]
+      end
+    end
+  end
+
+  describe '#password_field' do
+    it 'outputs label and input wrapped in div' do
+      output = builder.password_field :password
+      expect_equal output, [
+        '<div class="form-group">',
+        '<label class="form-label" for="person_password">',
+        'Password',
+        '</label>',
+        '<input class="form-control" type="password" name="person[password]" id="person_password" />',
+        '</div>'
+      ]
+    end
+
+    context 'when hint text provided' do
+      it 'outputs hint text in span inside label' do
+        output = builder.password_field :password_confirmation
+        expect_equal output, [
+          '<div class="form-group">',
+          '<label class="form-label" for="person_password_confirmation">',
+          'Confirm password',
+          '<span class="form-hint">',
+          'Password should match',
+          '</span>',
+          '</label>',
+          '<input class="form-control" type="password" name="person[password_confirmation]" id="person_password_confirmation" />',
+          '</div>'
+        ]
+      end
+    end
+  end
+
 end

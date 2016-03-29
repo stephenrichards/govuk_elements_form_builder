@@ -2,15 +2,17 @@ module GovukElementsFormBuilder
   class FormBuilder < ActionView::Helpers::FormBuilder
     delegate :content_tag, :tag, to: :@template
 
-    def text_field(name, *arg)
-      content_tag :div, class: 'form-group' do
-        options = arg.extract_options!
-        text_field_class = ["form-control"]
-        options[:class] = text_field_class
+    %w[text_field email_field].each do |method_name|
+      define_method(method_name) do |name, *args |
+        content_tag :div, class: 'form-group' do
+          options = args.extract_options!
+          text_field_class = ["form-control"]
+          options[:class] = text_field_class
 
-        label = label(name, class: "form-label")
-        add_hint label, name
-        (label + super(name, options.except(:label)) ).html_safe
+          label = label(name, class: "form-label")
+          add_hint label, name
+          (label + super(name, options.except(:label)) ).html_safe
+        end
       end
     end
 

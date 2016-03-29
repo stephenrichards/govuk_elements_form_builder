@@ -24,8 +24,11 @@ en:
   helpers:
     label:
       person:
+        email_home: Home email address
+        email_work: Work email address
         name: Full name
         ni_number: National Insurance number
     hint:
       person:
+        email_home: For eg. John.Smith@example.com
         ni_number: It’ll be on your last payslip. For example, JH 21 90 0A.

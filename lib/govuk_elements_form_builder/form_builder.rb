@@ -41,7 +41,7 @@ module GovukElementsFormBuilder
     def add_error_to_label! html_tag
       field = html_tag[/for="([^"]+)"/, 1]
       attribute = field.sub(@object_name.to_s + '_', '').to_sym
-      message = errors.full_messages_for(attribute).first
+      message = error_full_message_for attribute
       html_tag.sub!('label', %'label id="error_#{field}"')
       html_tag.sub!('</label',
         %'<span class="error-message" id="error_message_#{field}">#{message}</span></label')
@@ -56,6 +56,13 @@ module GovukElementsFormBuilder
       classes = 'form-group'
       classes += ' error' if error_for? attribute
       classes
+    end
+
+    def error_full_message_for attribute
+      message = errors.full_messages_for(attribute).first
+      label = attribute.to_s.humanize.capitalize
+      message.sub!(label, label_text(attribute))
+      message
     end
 
     def error_for? attribute
@@ -74,7 +81,15 @@ module GovukElementsFormBuilder
     end
 
     def hint_text name
-      I18n.t("#{object_name}.#{name}", default: "", scope: 'helpers.hint').presence
+      I18n.t("#{object_name}.#{name}",
+        default: '',
+        scope: 'helpers.hint').presence
+    end
+
+    def label_text attribute
+      I18n.t("#{object_name}.#{attribute}",
+        default: attribute.to_s.humanize.capitalize,
+        scope: 'helpers.label').presence
     end
   end
 end

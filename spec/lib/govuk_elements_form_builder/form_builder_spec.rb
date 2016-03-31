@@ -22,6 +22,7 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
   describe '#text_field' do
     it 'outputs label and input wrapped in div' do
       output = builder.text_field :name
+
       expect_equal output, [
         '<div class="form-group">',
         '<label class="form-label" for="person_name">',
@@ -44,6 +45,25 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
           '</span>',
           '</label>',
           '<input class="form-control" type="text" name="person[ni_number]" id="person_ni_number" />',
+          '</div>'
+        ]
+      end
+    end
+
+    context 'when validation error on object' do
+      it 'outputs error message in span inside label' do
+        resource.valid?
+        output = builder.text_field :name
+
+        expect_equal output, [
+          '<div class="form-group error">',
+          '<label id="error_person_name" class="form-label" for="person_name">',
+          'Full name',
+          '<span class="error-message" id="error_message_person_name">',
+          "Name can't be blank",
+          '</span>',
+          '</label>',
+          '<input aria-describedby="error_message_person_name" class="form-control" type="text" name="person[name]" id="person_name" />',
           '</div>'
         ]
       end

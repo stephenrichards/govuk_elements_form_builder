@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.description = "Custom Ruby on Rails form builder that generates GOV.UK elements styled markup for form inputs, including error validation messages."
   s.license     = "MIT"
 
-  s.files = Dir["{lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
+  s.files = Dir["{app,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
 
   s.add_dependency "rails", "~> 4.2"
 

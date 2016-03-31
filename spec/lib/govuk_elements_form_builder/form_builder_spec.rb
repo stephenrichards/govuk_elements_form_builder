@@ -60,7 +60,7 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
           '<label id="error_person_name" class="form-label" for="person_name">',
           'Full name',
           '<span class="error-message" id="error_message_person_name">',
-          "Name can't be blank",
+          "Full name can't be blank",
           '</span>',
           '</label>',
           '<input aria-describedby="error_message_person_name" class="form-control" type="text" name="person[name]" id="person_name" />',

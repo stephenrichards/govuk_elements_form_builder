@@ -72,10 +72,6 @@ module GovukElementsFormBuilder
       errors.messages.key?(attribute) && !errors.messages[attribute].empty?
     end
 
-    def error_id attribute
-      "error-#{@object_name.tr('[]','-')}-#{attribute}".squeeze('-')
-    end
-
     def add_hint label, name
       if hint = hint_text(name)
         hint_span = content_tag(:span, hint, class: 'form-hint')

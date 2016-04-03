@@ -13,7 +13,7 @@ module GovukElementsFormBuilder
 
     %w[text_field email_field password_field].each do |method_name|
       define_method(method_name) do |attribute, *args|
-        content_tag :div, class: form_group_classes(attribute) do
+        content_tag :div, class: form_group_classes(attribute), id: form_group_id(attribute) do
           options = args.extract_options!
           text_field_class = ["form-control"]
           options[:class] = text_field_class
@@ -38,11 +38,14 @@ module GovukElementsFormBuilder
       end
     end
 
+    def form_group_id attribute
+      "error_#{@object_name}_#{attribute}" if error_for? attribute
+    end
+
     def add_error_to_label! html_tag
       field = html_tag[/for="([^"]+)"/, 1]
       attribute = field.sub(@object_name.to_s + '_', '').to_sym
       message = error_full_message_for attribute
-      html_tag.sub!('label', %'label id="error_#{field}"')
       html_tag.sub!('</label',
         %'<span class="error-message" id="error_message_#{field}">#{message}</span></label')
     end

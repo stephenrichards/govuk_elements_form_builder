@@ -56,8 +56,8 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
         output = builder.text_field :name
 
         expect_equal output, [
-          '<div class="form-group error">',
-          '<label id="error_person_name" class="form-label" for="person_name">',
+          '<div class="form-group error" id="error_person_name">',
+          '<label class="form-label" for="person_name">',
           'Full name',
           '<span class="error-message" id="error_message_person_name">',
           "Full name can't be blank",

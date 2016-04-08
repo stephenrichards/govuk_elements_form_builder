@@ -10,4 +10,9 @@ class Person
   attr_accessor :password
   attr_accessor :password_confirmation
 
+  attr_accessor :address
+
+  def address_attributes=(attributes)
+    @address = Address.new(attributes)
+  end
 end

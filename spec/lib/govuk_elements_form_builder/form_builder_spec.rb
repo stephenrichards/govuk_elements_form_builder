@@ -50,6 +50,23 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
       end
     end
 
+    context 'when fields_for used' do
+      it 'outputs label and input with correct ids' do
+        resource.address = Address.new
+        output = builder.fields_for(:address) do |f|
+          f.text_field :postcode
+        end
+        expect_equal output, [
+          '<div class="form-group">',
+          '<label class="form-label" for="person_address_attributes_postcode">',
+          'Postcode',
+          '</label>',
+          '<input class="form-control" type="text" name="person[address_attributes][postcode]" id="person_address_attributes_postcode" />',
+          '</div>'
+        ]
+      end
+    end
+
     context 'when validation error on object' do
       it 'outputs error message in span inside label' do
         resource.valid?
@@ -68,6 +85,30 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
         ]
       end
     end
+
+    context 'when validation error on child object' do
+      it 'outputs error message in span inside label' do
+        resource.address = Address.new
+        resource.address.valid?
+
+        output = builder.fields_for(:address) do |f|
+          f.text_field :postcode
+        end
+
+        expect_equal output, [
+          '<div class="form-group error" id="error_person_address_attributes_postcode">',
+          '<label class="form-label" for="person_address_attributes_postcode">',
+          'Postcode',
+          '<span class="error-message" id="error_message_person_address_attributes_postcode">',
+          "Postcode can't be blank",
+          '</span>',
+          '</label>',
+          '<input aria-describedby="error_message_person_address_attributes_postcode" class="form-control" type="text" name="person[address_attributes][postcode]" id="person_address_attributes_postcode" />',
+          '</div>'
+        ]
+      end
+    end
+
   end
 
   describe '#email_field' do

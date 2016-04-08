@@ -11,6 +11,12 @@ module GovukElementsFormBuilder
       super
     end
 
+    # Ensure fields_for yields a GovukElementsFormBuilder.
+    def fields_for attribute, *args
+      options = args.extract_options!
+      super attribute, options.merge(builder: self.class)
+    end
+
     %w[text_field email_field password_field].each do |method_name|
       define_method(method_name) do |attribute, *args|
         content_tag :div, class: form_group_classes(attribute), id: form_group_id(attribute) do
@@ -38,8 +44,12 @@ module GovukElementsFormBuilder
       end
     end
 
+    def attribute_prefix
+      @object_name.to_s.tr('[]','_').chomp('_')
+    end
+
     def form_group_id attribute
-      "error_#{@object_name}_#{attribute}" if error_for? attribute
+      "error_#{attribute_prefix}_#{attribute}" if error_for? attribute
     end
 
     def add_error_to_label! html_tag
@@ -62,7 +72,8 @@ module GovukElementsFormBuilder
     end
 
     def error_full_message_for attribute
-      message = errors.full_messages_for(attribute).first
+      object_attribute = adjust_nested_object_attribute attribute
+      message = errors.full_messages_for(object_attribute).first
       label = attribute.to_s.humanize.capitalize
       message.sub!(label, label_text(attribute))
       message
@@ -70,6 +81,20 @@ module GovukElementsFormBuilder
 
     def error_for? attribute
       errors.messages.key?(attribute) && !errors.messages[attribute].empty?
+    end
+
+    def adjust_nested_object_attribute attribute
+      if parent_builder?
+        attribute.to_s.
+          sub("#{attribute_prefix}_", '').
+          to_sym
+      else
+        attribute
+      end
+    end
+
+    def parent_builder?
+      options[:parent_builder].present?
     end
 
     def add_hint label, name

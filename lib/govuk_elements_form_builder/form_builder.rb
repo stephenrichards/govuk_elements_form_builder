@@ -1,7 +1,7 @@
 module GovukElementsFormBuilder
   class FormBuilder < ActionView::Helpers::FormBuilder
 
-    delegate :content_tag, :tag, to: :@template
+    delegate :content_tag, :tag, :safe_join, to: :@template
     delegate :errors, to: :@object
 
     def initialize *args
@@ -17,7 +17,7 @@ module GovukElementsFormBuilder
       super attribute, options.merge(builder: self.class)
     end
 
-    %w[
+    %i[
       email_field
       password_field
       text_area
@@ -30,13 +30,44 @@ module GovukElementsFormBuilder
           options[:class] = text_field_class
 
           label = label(attribute, class: "form-label")
-          add_hint label, attribute
+          add_hint :label, label, attribute
           (label + super(attribute, options.except(:label)) ).html_safe
         end
       end
     end
 
+    def radio_button_fieldset attribute, options={}
+      content_tag :fieldset, fieldset_options(options) do
+        safe_join([
+          fieldset_legend(attribute),
+          radio_inputs(attribute, options)
+        ], "\n")
+      end
+    end
+
     private
+
+    def radio_inputs attribute, options
+      choices = options[:choices] || [ :yes, :no ]
+      choices.map do |choice|
+        label(attribute, class: 'block-label', value: choice) do |tag|
+          input = radio_button(attribute, choice)
+          input + localized_label("#{attribute}.#{choice}")
+        end
+      end
+    end
+
+    def fieldset_legend attribute
+      legend = content_tag(:legend, fieldset_text(attribute), class: 'heading-medium')
+      add_hint :legend, legend, attribute
+      legend.html_safe
+    end
+
+    def fieldset_options options
+      fieldset_options = {}
+      fieldset_options[:class] = 'inline' if options[:inline] == true
+      fieldset_options
+    end
 
     def add_error_to_html_tag! html_tag
       case html_tag
@@ -92,28 +123,34 @@ module GovukElementsFormBuilder
         to_sym
     end
 
-    def add_hint label, name
+    def add_hint tag, element, name
       if hint = hint_text(name)
         hint_span = content_tag(:span, hint, class: 'form-hint')
-        label.sub!('</label>', hint_span + '</label>'.html_safe)
+        element.sub!("</#{tag}>", "#{hint_span}</#{tag}>".html_safe)
       end
     end
 
-    def hint_text name
-      I18n.t("#{object_name}.#{name}",
-        default: '',
-        scope: 'helpers.hint').presence
+    def fieldset_text attribute
+      localized 'helpers.fieldset', attribute, default_label(attribute)
+    end
+
+    def hint_text attribute
+      localized 'helpers.hint', attribute, ''
     end
 
     def default_label attribute
-      attribute.to_s.humanize.capitalize
+      attribute.to_s.split('.').last.humanize.capitalize
     end
 
     def localized_label attribute
+      localized 'helpers.label', attribute, default_label(attribute)
+    end
+
+    def localized scope, attribute, default
       key = "#{object_name}.#{attribute}"
       I18n.t(key,
-        default: default_label(attribute),
-        scope: 'helpers.label').presence
+        default: default,
+        scope: scope).presence
     end
   end
 end

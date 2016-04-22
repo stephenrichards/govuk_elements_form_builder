@@ -222,4 +222,52 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
     end
   end
 
+  describe '#radio_button_fieldset' do
+    it 'outputs radio buttons wrapped in labels' do
+      output = builder.radio_button_fieldset :location, choices: [:ni, :isle_of_man_channel_islands, :british_abroad]
+      expect_equal output, [
+        '<fieldset>',
+        '<legend class="heading-medium">',
+        'Where do you live?',
+        '<span class="form-hint">',
+        'Select from these options because you answered you do not reside in England, Wales, or Scotland',
+        '</span>',
+        '</legend>',
+        '<label class="block-label" for="person_location_ni">',
+        '<input type="radio" value="ni" name="person[location]" id="person_location_ni" />',
+        'Northern Ireland',
+        '</label>',
+        '<label class="block-label" for="person_location_isle_of_man_channel_islands">',
+        '<input type="radio" value="isle_of_man_channel_islands" name="person[location]" id="person_location_isle_of_man_channel_islands" />',
+        'Isle of Man or Channel Islands',
+        '</label>',
+        '<label class="block-label" for="person_location_british_abroad">',
+        '<input type="radio" value="british_abroad" name="person[location]" id="person_location_british_abroad" />',
+        'I am a British citizen living abroad',
+        '</label>',
+        '</fieldset>'
+      ]
+    end
+
+    it 'outputs yes/no choices when no choices specified, and adds "inline" class to fieldset when passed "inline: true"' do
+      output = builder.radio_button_fieldset :has_user_account, inline: true
+      expect_equal output, [
+        '<fieldset class="inline">',
+        '<legend class="heading-medium">',
+        'Do you already have a personal user account?',
+        '</legend>',
+        '<label class="block-label" for="person_has_user_account_yes">',
+        '<input type="radio" value="yes" name="person[has_user_account]" id="person_has_user_account_yes" />',
+        'Yes',
+        '</label>',
+        '<label class="block-label" for="person_has_user_account_no">',
+        '<input type="radio" value="no" name="person[has_user_account]" id="person_has_user_account_no" />',
+        'No',
+        '</label>',
+        '</fieldset>'
+      ]
+    end
+
+  end
+
 end

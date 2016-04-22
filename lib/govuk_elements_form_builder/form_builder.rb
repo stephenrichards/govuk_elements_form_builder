@@ -45,7 +45,25 @@ module GovukElementsFormBuilder
       end
     end
 
+    def check_box_fieldset legend_key, attributes
+      content_tag :fieldset, fieldset_options(options) do
+        safe_join([
+          fieldset_legend(legend_key),
+          check_box_inputs(attributes)
+        ], "\n")
+      end
+    end
+
     private
+
+    def check_box_inputs attributes
+      attributes.map do |attribute|
+        label(attribute, class: 'block-label') do |tag|
+          input = check_box(attribute)
+          input + localized_label("#{attribute}")
+        end
+      end
+    end
 
     def radio_inputs attribute, options
       choices = options[:choices] || [ :yes, :no ]

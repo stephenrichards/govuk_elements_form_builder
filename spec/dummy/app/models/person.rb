@@ -11,10 +11,15 @@ class Person
   attr_accessor :ni_number
   attr_accessor :password
   attr_accessor :password_confirmation
+  attr_accessor :waste_transport
 
   validates_presence_of :name
 
   def address_attributes=(attributes)
     @address = Address.new(attributes)
+  end
+
+  def waste_transport_attributes=(attributes)
+    @waste_transport = WasteTransport.new(attributes)
   end
 end

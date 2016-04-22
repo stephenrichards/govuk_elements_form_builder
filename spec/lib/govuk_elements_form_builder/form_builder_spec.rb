@@ -270,4 +270,39 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
 
   end
 
+  describe '#check_box_fieldset' do
+    it 'outputs checkboxes wrapped in labels' do
+      resource.waste_transport = WasteTransport.new
+      output = builder.fields_for(:waste_transport) do |f|
+        f.check_box_fieldset :waste_transport, [:animal_carcasses, :mines_quarries, :farm_agricultural]
+      end
+
+      expect_equal output, [
+        '<fieldset>',
+        '<legend class="heading-medium">',
+        'Which types of waste do you transport regularly?',
+        '<span class="form-hint">',
+        'Select all that apply',
+        '</span>',
+        '</legend>',
+        '<label class="block-label" for="person_waste_transport_attributes_animal_carcasses">',
+        '<input name="person[waste_transport_attributes][animal_carcasses]" type="hidden" value="0" />',
+        '<input type="checkbox" value="1" name="person[waste_transport_attributes][animal_carcasses]" id="person_waste_transport_attributes_animal_carcasses" />',
+        'Waste from animal carcasses',
+        '</label>',
+        '<label class="block-label" for="person_waste_transport_attributes_mines_quarries">',
+        '<input name="person[waste_transport_attributes][mines_quarries]" type="hidden" value="0" />',
+        '<input type="checkbox" value="1" name="person[waste_transport_attributes][mines_quarries]" id="person_waste_transport_attributes_mines_quarries" />',
+        'Waste from mines or quarries',
+        '</label>',
+        '<label class="block-label" for="person_waste_transport_attributes_farm_agricultural">',
+        '<input name="person[waste_transport_attributes][farm_agricultural]" type="hidden" value="0" />',
+        '<input type="checkbox" value="1" name="person[waste_transport_attributes][farm_agricultural]" id="person_waste_transport_attributes_farm_agricultural" />',
+        'Farm or agricultural waste',
+        '</label>',
+        '</fieldset>'
+      ]
+    end
+
+  end
 end

@@ -26,6 +26,8 @@ en:
       person:
         location: Where do you live?
         has_user_account: Do you already have a personal user account?
+      person[waste_transport_attributes]:
+        waste_transport: Which types of waste do you transport regularly?
     label:
       person:
         email_home: Home email address
@@ -42,6 +44,10 @@ en:
         address: Full address
       person[address_attributes][country_attributes]:
         name: Country
+      person[waste_transport_attributes]:
+        animal_carcasses: Waste from animal carcasses
+        mines_quarries: Waste from mines or quarries
+        farm_agricultural: Farm or agricultural waste
     hint:
       person:
         email_home: For eg. John.Smith@example.com
@@ -50,3 +56,5 @@ en:
         password_confirmation: Password should match
       person[address_attributes]:
         address: Exclude postcode. For example, 102 Petty France, London
+      person[waste_transport_attributes]:
+        waste_transport: Select all that apply

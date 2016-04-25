@@ -1,6 +1,5 @@
 class Person
   include ActiveModel::Model
-  GENDER = %w{ female male }
 
   attr_accessor :address
   attr_accessor :email_work

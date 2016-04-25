@@ -49,6 +49,27 @@ RSpec.describe GovukElementsErrorsHelper, type: :helper do
         '</ul>' +
       '</div>')
     end
+
+    it 'creates ID link correctly' do
+      external_user = ExternalUser.new
+      external_user.person = resource
+      external_user.person.valid?
+
+      output = described_class.error_summary external_user, error_summary_heading, error_summary_description
+      expect(output).to_not be_nil
+      expect(split_html(output)).to eq split_html('<div ' +
+          'class="error-summary" role="group" aria-labelledby="error-summary-heading" tabindex="-1">' +
+        '<h1 id="error-summary-heading" class="heading-medium error-summary-heading">' +
+          error_summary_heading +
+        '</h1>' +
+        '<p>' +
+          error_summary_description +
+        '</p>' +
+        '<ul class="error-summary-list">' +
+          '<li><a href="#error_external_user_person_attributes_name">Name can&#39;t be blank</a></li>' +
+        '</ul>' +
+      '</div>')
+    end
   end
 
   describe '#error_summary when twice nested child object has validation errors' do

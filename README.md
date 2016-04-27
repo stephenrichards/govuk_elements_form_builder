@@ -8,23 +8,33 @@ This gem serves a form builder and other various helper methods to produces the 
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Add these lines to your application's Gemfile, form builder is the last gem in list:
 
 ```ruby
-gem 'govuk_elements_form_builder'
+gem 'govuk_frontend_toolkit'
+gem 'govuk_elements_rails'
+gem 'govuk_elements_form_builder', git: 'https://github.com/ministryofjustice/govuk_elements_form_builder.git'
 ```
 
 And then execute:
 
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install govuk_elements_form_builder
+```sh
+bundle
+```
 
 ## Usage
 
-TODO: Write usage instructions here
+In your application's `config/application.rb` file, configure the form builder to be the default like this:
+
+```rb
+  class Application < Rails::Application
+    # ...
+    ActionView::Base.default_form_builder = GovukElementsFormBuilder::FormBuilder
+  end
+```
+
+You can see a visual guide to [using the form builder](https://govuk-elements-rails-guide.herokuapp.com/) here:
+https://govuk-elements-rails-guide.herokuapp.com/
 
 ## Development
 

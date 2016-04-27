@@ -23,7 +23,7 @@ RSpec.describe GovukElementsErrorsHelper, type: :helper do
           error_summary_description +
         '</p>' +
         '<ul class="error-summary-list">' +
-          '<li><a href="#error_person_name">Full name can&#39;t be blank</a></li>' +
+          '<li><a href="#error_person_name">Full name is required</a></li>' +
         '</ul>' +
       '</div>')
     end
@@ -45,7 +45,7 @@ RSpec.describe GovukElementsErrorsHelper, type: :helper do
           error_summary_description +
         '</p>' +
         '<ul class="error-summary-list">' +
-          '<li><a href="#error_person_address_attributes_postcode">Postcode can&#39;t be blank</a></li>' +
+          '<li><a href="#error_person_address_attributes_postcode">Postcode is required</a></li>' +
         '</ul>' +
       '</div>')
     end
@@ -68,7 +68,7 @@ RSpec.describe GovukElementsErrorsHelper, type: :helper do
           error_summary_description +
         '</p>' +
         '<ul class="error-summary-list">' +
-          '<li><a href="#error_person_address_attributes_country_attributes_name">Country can&#39;t be blank</a></li>' +
+          '<li><a href="#error_person_address_attributes_country_attributes_name">Country is required</a></li>' +
         '</ul>' +
       '</div>')
     end

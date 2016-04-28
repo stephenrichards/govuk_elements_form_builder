@@ -59,6 +59,18 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
       ]
     end
 
+    it 'passes options passed to text_field onto super text_field implementation' do
+      output = builder.text_field :name, size: 100
+      expect_equal output, [
+        '<div class="form-group">',
+        '<label class="form-label" for="person_name">',
+        'Full name',
+        '</label>',
+        '<input size="100" class="form-control" type="text" name="person[name]" id="person_name" />',
+        '</div>'
+      ]
+    end
+
     context 'when hint text provided' do
       it 'outputs hint text in span inside label' do
         output = builder.text_field :ni_number

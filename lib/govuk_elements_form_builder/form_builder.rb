@@ -20,14 +20,19 @@ module GovukElementsFormBuilder
     %i[
       email_field
       password_field
+      number_field
+      phone_field
+      range_field
+      search_field
+      telephone_field
       text_area
       text_field
+      url_field
     ].each do |method_name|
       define_method(method_name) do |attribute, *args|
         content_tag :div, class: form_group_classes(attribute), id: form_group_id(attribute) do
           options = args.extract_options!
-          text_field_class = ["form-control"]
-          options[:class] = text_field_class
+          set_field_classes! options
 
           label = label(attribute, class: "form-label")
           add_hint :label, label, attribute
@@ -55,6 +60,18 @@ module GovukElementsFormBuilder
     end
 
     private
+
+    def set_field_classes! options
+      text_field_class = "form-control"
+      options[:class] = case options[:class]
+                        when String
+                          [text_field_class, options[:class]]
+                        when Array
+                          options[:class].unshift text_field_class
+                        else
+                          options[:class] = text_field_class
+                        end
+    end
 
     def check_box_inputs attributes
       attributes.map do |attribute|
@@ -92,7 +109,9 @@ module GovukElementsFormBuilder
       when /^<label/
         add_error_to_label! html_tag
       when /^<input/
-        add_error_to_input! html_tag
+        add_error_to_input! html_tag, 'input'
+      when /^<textarea/
+        add_error_to_input! html_tag, 'textarea'
       else
         html_tag
       end
@@ -114,9 +133,9 @@ module GovukElementsFormBuilder
         %'<span class="error-message" id="error_message_#{field}">#{message}</span></label')
     end
 
-    def add_error_to_input! html_tag
+    def add_error_to_input! html_tag, element
       field = html_tag[/id="([^"]+)"/, 1]
-      html_tag.sub!('input', %'input aria-describedby="error_message_#{field}"')
+      html_tag.sub!(element, %'#{element} aria-describedby="error_message_#{field}"')
     end
 
     def form_group_classes attribute

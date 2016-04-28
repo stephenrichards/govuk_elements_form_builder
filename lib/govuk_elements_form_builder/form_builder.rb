@@ -20,8 +20,14 @@ module GovukElementsFormBuilder
     %i[
       email_field
       password_field
+      number_field
+      phone_field
+      range_field
+      search_field
+      telephone_field
       text_area
       text_field
+      url_field
     ].each do |method_name|
       define_method(method_name) do |attribute, *args|
         content_tag :div, class: form_group_classes(attribute), id: form_group_id(attribute) do

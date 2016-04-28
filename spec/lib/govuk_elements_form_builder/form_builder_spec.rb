@@ -200,8 +200,32 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
     include_examples 'input field', :email_field, :email
   end
 
+  describe "#number_field" do
+    include_examples 'input field', :number_field, :number
+  end
+
   describe '#password_field' do
     include_examples 'input field', :password_field, :password
+  end
+
+  describe '#phone_field' do
+    include_examples 'input field', :phone_field, :tel
+  end
+
+  describe '#range_field' do
+    include_examples 'input field', :range_field, :range
+  end
+
+  describe '#search_field' do
+    include_examples 'input field', :search_field, :search
+  end
+
+  describe '#telephone_field' do
+    include_examples 'input field', :telephone_field, :tel
+  end
+
+  describe '#url_field' do
+    include_examples 'input field', :url_field, :url
   end
 
   describe '#radio_button_fieldset' do

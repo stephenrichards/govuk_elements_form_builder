@@ -19,61 +19,61 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
     expect(split_output).to eq split_expected
   end
 
-  describe '#text_field' do
+  shared_examples_for 'input field' do |method, type|
     it 'outputs label and input wrapped in div' do
-      output = builder.text_field :name
+      output = builder.send method, :name
 
       expect_equal output, [
         '<div class="form-group">',
         '<label class="form-label" for="person_name">',
         'Full name',
         '</label>',
-        '<input class="form-control" type="text" name="person[name]" id="person_name" />',
+        %'<input class="form-control" type="#{type}" name="person[name]" id="person_name" />',
         '</div>'
       ]
     end
 
     it 'adds custom class to input when passed class: "custom-class"' do
-      output = builder.text_field :name, class: "custom-class"
+      output = builder.send method, :name, class: "custom-class"
 
       expect_equal output, [
         '<div class="form-group">',
         '<label class="form-label" for="person_name">',
         'Full name',
         '</label>',
-        '<input class="custom-class form-control" type="text" name="person[name]" id="person_name" />',
+        %'<input class="custom-class form-control" type="#{type}" name="person[name]" id="person_name" />',
         '</div>'
       ]
     end
 
     it 'adds custom classes to input when passed class: ["custom-class", "another-class"]' do
-      output = builder.text_field :name, class: ["custom-class", "another-class"]
+      output = builder.send method, :name, class: ["custom-class", "another-class"]
 
       expect_equal output, [
         '<div class="form-group">',
         '<label class="form-label" for="person_name">',
         'Full name',
         '</label>',
-        '<input class="custom-class another-class form-control" type="text" name="person[name]" id="person_name" />',
+        %'<input class="custom-class another-class form-control" type="#{type}" name="person[name]" id="person_name" />',
         '</div>'
       ]
     end
 
     it 'passes options passed to text_field onto super text_field implementation' do
-      output = builder.text_field :name, size: 100
+      output = builder.send method, :name, size: 100
       expect_equal output, [
         '<div class="form-group">',
         '<label class="form-label" for="person_name">',
         'Full name',
         '</label>',
-        '<input size="100" class="form-control" type="text" name="person[name]" id="person_name" />',
+        %'<input size="100" class="form-control" type="#{type}" name="person[name]" id="person_name" />',
         '</div>'
       ]
     end
 
     context 'when hint text provided' do
       it 'outputs hint text in span inside label' do
-        output = builder.text_field :ni_number
+        output = builder.send method, :ni_number
         expect_equal output, [
           '<div class="form-group">',
           '<label class="form-label" for="person_ni_number">',
@@ -82,7 +82,7 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
           'It’ll be on your last payslip. For example, JH 21 90 0A.',
           '</span>',
           '</label>',
-          '<input class="form-control" type="text" name="person[ni_number]" id="person_ni_number" />',
+          %'<input class="form-control" type="#{type}" name="person[ni_number]" id="person_ni_number" />',
           '</div>'
         ]
       end
@@ -99,7 +99,7 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
           '<label class="form-label" for="person_address_attributes_postcode">',
           'Postcode',
           '</label>',
-          '<input class="form-control" type="text" name="person[address_attributes][postcode]" id="person_address_attributes_postcode" />',
+          %'<input class="form-control" type="#{type}" name="person[address_attributes][postcode]" id="person_address_attributes_postcode" />',
           '</div>'
         ]
       end
@@ -108,7 +108,7 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
     context 'when validation error on object' do
       it 'outputs error message in span inside label' do
         resource.valid?
-        output = builder.text_field :name
+        output = builder.send method, :name
 
         expect_equal output, [
           '<div class="form-group error" id="error_person_name">',
@@ -118,7 +118,7 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
           "Full name is required",
           '</span>',
           '</label>',
-          '<input aria-describedby="error_message_person_name" class="form-control" type="text" name="person[name]" id="person_name" />',
+          %'<input aria-describedby="error_message_person_name" class="form-control" type="#{type}" name="person[name]" id="person_name" />',
           '</div>'
         ]
       end
@@ -130,7 +130,7 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
         resource.address.valid?
 
         output = builder.fields_for(:address) do |f|
-          f.text_field :postcode
+          f.send method, :postcode
         end
 
         expect_equal output, [
@@ -141,7 +141,7 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
           "Postcode is required",
           '</span>',
           '</label>',
-          '<input aria-describedby="error_message_person_address_attributes_postcode" class="form-control" type="text" name="person[address_attributes][postcode]" id="person_address_attributes_postcode" />',
+          %'<input aria-describedby="error_message_person_address_attributes_postcode" class="form-control" type="#{type}" name="person[address_attributes][postcode]" id="person_address_attributes_postcode" />',
           '</div>'
         ]
       end
@@ -155,7 +155,7 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
 
         output = builder.fields_for(:address) do |address|
           address.fields_for(:country) do |country|
-            country.text_field :name
+            country.send method, :name
           end
         end
 
@@ -167,12 +167,16 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
           "Country is required",
           '</span>',
           '</label>',
-          '<input aria-describedby="error_message_person_address_attributes_country_attributes_name" class="form-control" type="text" name="person[address_attributes][country_attributes][name]" id="person_address_attributes_country_attributes_name" />',
+          %'<input aria-describedby="error_message_person_address_attributes_country_attributes_name" class="form-control" type="#{type}" name="person[address_attributes][country_attributes][name]" id="person_address_attributes_country_attributes_name" />',
           '</div>'
         ]
       end
     end
 
+  end
+
+  describe '#text_field' do
+    include_examples 'input field', :text_field, :text
   end
 
   describe '#text_area' do

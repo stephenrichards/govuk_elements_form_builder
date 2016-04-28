@@ -65,9 +65,9 @@ module GovukElementsFormBuilder
       text_field_class = "form-control"
       options[:class] = case options[:class]
                         when String
-                          [options[:class], text_field_class]
+                          [text_field_class, options[:class]]
                         when Array
-                          options[:class] << text_field_class
+                          options[:class].unshift text_field_class
                         else
                           options[:class] = text_field_class
                         end

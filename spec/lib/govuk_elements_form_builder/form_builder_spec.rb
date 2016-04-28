@@ -47,27 +47,27 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
     end
 
     it 'adds custom class to input when passed class: "custom-class"' do
-      output = builder.send method, :name, class: "custom-class"
+      output = builder.send method, :name, class: 'custom-class'
 
       expect_equal output, [
         '<div class="form-group">',
         '<label class="form-label" for="person_name">',
         'Full name',
         '</label>',
-        %'<#{element_for(method)} class="custom-class form-control" #{type_for(method, type)}name="person[name]" id="person_name" />',
+        %'<#{element_for(method)} class="form-control custom-class" #{type_for(method, type)}name="person[name]" id="person_name" />',
         '</div>'
       ]
     end
 
     it 'adds custom classes to input when passed class: ["custom-class", "another-class"]' do
-      output = builder.send method, :name, class: ["custom-class", "another-class"]
+      output = builder.send method, :name, class: ['custom-class', 'another-class']
 
       expect_equal output, [
         '<div class="form-group">',
         '<label class="form-label" for="person_name">',
         'Full name',
         '</label>',
-        %'<#{element_for(method)} class="custom-class another-class form-control" #{type_for(method, type)}name="person[name]" id="person_name" />',
+        %'<#{element_for(method)} class="form-control custom-class another-class" #{type_for(method, type)}name="person[name]" id="person_name" />',
         '</div>'
       ]
     end

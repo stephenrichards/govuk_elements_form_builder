@@ -14,12 +14,25 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
   let(:builder) { described_class.new :person, resource, helper, {} }
 
   def expect_equal output, expected
-    split_output = output.split("<").join("\n<").split(">").join(">\n").squeeze("\n").strip + '>'
+    split_output = output.gsub(">\n</textarea>", ' />').split("<").join("\n<").split(">").join(">\n").squeeze("\n").strip + '>'
     split_expected = expected.join("\n")
     expect(split_output).to eq split_expected
   end
 
   shared_examples_for 'input field' do |method, type|
+
+    def element_for(method)
+      method == :text_area ? 'textarea' : 'input'
+    end
+
+    def type_for(method, type)
+      method == :text_area ? '' : %'type="#{type}" '
+    end
+
+    def size(method, size)
+      method == :text_area ? '' : %'size="#{size}" '
+    end
+
     it 'outputs label and input wrapped in div' do
       output = builder.send method, :name
 
@@ -28,7 +41,7 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
         '<label class="form-label" for="person_name">',
         'Full name',
         '</label>',
-        %'<input class="form-control" type="#{type}" name="person[name]" id="person_name" />',
+        %'<#{element_for(method)} class="form-control" #{type_for(method, type)}name="person[name]" id="person_name" />',
         '</div>'
       ]
     end
@@ -41,7 +54,7 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
         '<label class="form-label" for="person_name">',
         'Full name',
         '</label>',
-        %'<input class="custom-class form-control" type="#{type}" name="person[name]" id="person_name" />',
+        %'<#{element_for(method)} class="custom-class form-control" #{type_for(method, type)}name="person[name]" id="person_name" />',
         '</div>'
       ]
     end
@@ -54,7 +67,7 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
         '<label class="form-label" for="person_name">',
         'Full name',
         '</label>',
-        %'<input class="custom-class another-class form-control" type="#{type}" name="person[name]" id="person_name" />',
+        %'<#{element_for(method)} class="custom-class another-class form-control" #{type_for(method, type)}name="person[name]" id="person_name" />',
         '</div>'
       ]
     end
@@ -66,7 +79,7 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
         '<label class="form-label" for="person_name">',
         'Full name',
         '</label>',
-        %'<input size="100" class="form-control" type="#{type}" name="person[name]" id="person_name" />',
+        %'<#{element_for(method)} #{size(method, 100)}class="form-control" #{type_for(method, type)}name="person[name]" id="person_name" />',
         '</div>'
       ]
     end
@@ -82,7 +95,7 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
           'It’ll be on your last payslip. For example, JH 21 90 0A.',
           '</span>',
           '</label>',
-          %'<input class="form-control" type="#{type}" name="person[ni_number]" id="person_ni_number" />',
+          %'<#{element_for(method)} class="form-control" #{type_for(method, type)}name="person[ni_number]" id="person_ni_number" />',
           '</div>'
         ]
       end
@@ -99,7 +112,7 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
           '<label class="form-label" for="person_address_attributes_postcode">',
           'Postcode',
           '</label>',
-          %'<input class="form-control" type="#{type}" name="person[address_attributes][postcode]" id="person_address_attributes_postcode" />',
+          %'<#{element_for(method)} class="form-control" #{type_for(method, type)}name="person[address_attributes][postcode]" id="person_address_attributes_postcode" />',
           '</div>'
         ]
       end
@@ -118,7 +131,7 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
           "Full name is required",
           '</span>',
           '</label>',
-          %'<input aria-describedby="error_message_person_name" class="form-control" type="#{type}" name="person[name]" id="person_name" />',
+          %'<#{element_for(method)} aria-describedby="error_message_person_name" class="form-control" #{type_for(method, type)}name="person[name]" id="person_name" />',
           '</div>'
         ]
       end
@@ -141,7 +154,7 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
           "Postcode is required",
           '</span>',
           '</label>',
-          %'<input aria-describedby="error_message_person_address_attributes_postcode" class="form-control" type="#{type}" name="person[address_attributes][postcode]" id="person_address_attributes_postcode" />',
+          %'<#{element_for(method)} aria-describedby="error_message_person_address_attributes_postcode" class="form-control" #{type_for(method, type)}name="person[address_attributes][postcode]" id="person_address_attributes_postcode" />',
           '</div>'
         ]
       end
@@ -167,7 +180,7 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
           "Country is required",
           '</span>',
           '</label>',
-          %'<input aria-describedby="error_message_person_address_attributes_country_attributes_name" class="form-control" type="#{type}" name="person[address_attributes][country_attributes][name]" id="person_address_attributes_country_attributes_name" />',
+          %'<#{element_for(method)} aria-describedby="error_message_person_address_attributes_country_attributes_name" class="form-control" #{type_for(method, type)}name="person[address_attributes][country_attributes][name]" id="person_address_attributes_country_attributes_name" />',
           '</div>'
         ]
       end
@@ -180,26 +193,7 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
   end
 
   describe '#text_area' do
-    context 'when fields_for used' do
-      it 'outputs label and input with correct ids and hint text in span' do
-        resource.address = Address.new
-        output = builder.fields_for(:address) do |f|
-          f.text_area :address
-        end
-        expect_equal output, [
-          '<div class="form-group">',
-          '<label class="form-label" for="person_address_attributes_address">',
-          'Full address',
-          '<span class="form-hint">',
-          'Exclude postcode. For example, 102 Petty France, London',
-          '</span>',
-          '</label>',
-          '<textarea class="form-control" name="person[address_attributes][address]" id="person_address_attributes_address">',
-          '</textarea>',
-          '</div>'
-        ]
-      end
-    end
+    include_examples 'input field', :text_area, nil
   end
 
   describe '#email_field' do

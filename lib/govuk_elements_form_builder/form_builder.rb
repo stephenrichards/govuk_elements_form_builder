@@ -103,7 +103,9 @@ module GovukElementsFormBuilder
       when /^<label/
         add_error_to_label! html_tag
       when /^<input/
-        add_error_to_input! html_tag
+        add_error_to_input! html_tag, 'input'
+      when /^<textarea/
+        add_error_to_input! html_tag, 'textarea'
       else
         html_tag
       end
@@ -125,9 +127,9 @@ module GovukElementsFormBuilder
         %'<span class="error-message" id="error_message_#{field}">#{message}</span></label')
     end
 
-    def add_error_to_input! html_tag
+    def add_error_to_input! html_tag, element
       field = html_tag[/id="([^"]+)"/, 1]
-      html_tag.sub!('input', %'input aria-describedby="error_message_#{field}"')
+      html_tag.sub!(element, %'#{element} aria-describedby="error_message_#{field}"')
     end
 
     def form_group_classes attribute

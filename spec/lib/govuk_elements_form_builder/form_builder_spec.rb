@@ -33,6 +33,32 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
       ]
     end
 
+    it 'adds custom class to input when passed class: "custom-class"' do
+      output = builder.text_field :name, class: "custom-class"
+
+      expect_equal output, [
+        '<div class="form-group">',
+        '<label class="form-label" for="person_name">',
+        'Full name',
+        '</label>',
+        '<input class="custom-class form-control" type="text" name="person[name]" id="person_name" />',
+        '</div>'
+      ]
+    end
+
+    it 'adds custom classes to input when passed class: ["custom-class", "another-class"]' do
+      output = builder.text_field :name, class: ["custom-class", "another-class"]
+
+      expect_equal output, [
+        '<div class="form-group">',
+        '<label class="form-label" for="person_name">',
+        'Full name',
+        '</label>',
+        '<input class="custom-class another-class form-control" type="text" name="person[name]" id="person_name" />',
+        '</div>'
+      ]
+    end
+
     context 'when hint text provided' do
       it 'outputs hint text in span inside label' do
         output = builder.text_field :ni_number

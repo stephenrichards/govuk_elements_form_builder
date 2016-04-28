@@ -26,8 +26,7 @@ module GovukElementsFormBuilder
       define_method(method_name) do |attribute, *args|
         content_tag :div, class: form_group_classes(attribute), id: form_group_id(attribute) do
           options = args.extract_options!
-          text_field_class = ["form-control"]
-          options[:class] = text_field_class
+          set_field_classes! options
 
           label = label(attribute, class: "form-label")
           add_hint :label, label, attribute
@@ -55,6 +54,18 @@ module GovukElementsFormBuilder
     end
 
     private
+
+    def set_field_classes! options
+      text_field_class = "form-control"
+      options[:class] = case options[:class]
+                        when String
+                          [options[:class], text_field_class]
+                        when Array
+                          options[:class] << text_field_class
+                        else
+                          options[:class] = text_field_class
+                        end
+    end
 
     def check_box_inputs attributes
       attributes.map do |attribute|

@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe GovukElementsErrorsHelper, type: :helper do
+  include TranslationHelper
 
   let(:resource)  { Person.new }
   let(:error_summary_heading) { 'Message to alert the user to a problem goes here' }
@@ -10,21 +11,36 @@ RSpec.describe GovukElementsErrorsHelper, type: :helper do
     output.split('>').join(">\n")
   end
 
+  def expected_html message, attribute
+    '<div ' +
+        'class="error-summary" role="group" aria-labelledby="error-summary-heading" tabindex="-1">' +
+      '<h1 id="error-summary-heading" class="heading-medium error-summary-heading">' +
+        error_summary_heading +
+      '</h1>' +
+      '<p>' +
+        error_summary_description +
+      '</p>' +
+      '<ul class="error-summary-list">' +
+        %'<li><a href="#error_#{attribute}">#{message}</a></li>' +
+      '</ul>' +
+    '</div>'
+  end
+
   shared_examples_for 'error summary' do |message, attribute|
     it 'outputs error full messages' do
       expect(output).to_not be_nil
-      expect(split_html(output)).to eq split_html('<div ' +
-          'class="error-summary" role="group" aria-labelledby="error-summary-heading" tabindex="-1">' +
-        '<h1 id="error-summary-heading" class="heading-medium error-summary-heading">' +
-          error_summary_heading +
-        '</h1>' +
-        '<p>' +
-          error_summary_description +
-        '</p>' +
-        '<ul class="error-summary-list">' +
-          %'<li><a href="#error_#{attribute}">#{message}</a></li>' +
-        '</ul>' +
-      '</div>')
+      expected = expected_html message, attribute
+      expect(split_html(output)).to eq split_html(expected)
+    end
+  end
+
+  shared_examples_for 'error summary with translations' do |message, attribute, translations|
+    it 'outputs error full messages' do
+      with_translations(:en, translations) do
+        expect(output).to_not be_nil
+        expected = expected_html message, attribute
+        expect(split_html(output)).to eq split_html(expected)
+      end
     end
   end
 
@@ -35,6 +51,18 @@ RSpec.describe GovukElementsErrorsHelper, type: :helper do
     end
 
     include_examples 'error summary', 'Full name is required', 'person_name'
+
+    include_examples 'error summary with translations', 'Enter your full name', 'person_name', YAML.load(%'
+        errors:
+          format: "%{message}"
+        activemodel:
+          errors:
+            models:
+              person:
+                attributes:
+                  name:
+                    blank: "Enter your full name"
+      ')
   end
 
   describe '#error_summary when child object has validation errors' do

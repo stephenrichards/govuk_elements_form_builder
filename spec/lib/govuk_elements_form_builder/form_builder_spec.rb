@@ -4,6 +4,7 @@ require 'spec_helper'
 class TestHelper < ActionView::Base; end
 
 RSpec.describe GovukElementsFormBuilder::FormBuilder do
+  include TranslationHelper
 
   it "should have a version" do
     expect(GovukElementsFormBuilder::VERSION).to eq("0.0.1")
@@ -122,18 +123,30 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
       it 'outputs error message in span inside label' do
         resource.valid?
         output = builder.send method, :name
+        expected = expected_error_html method, type, 'person_name',
+          'person[name]', 'Full name', 'Full name is required'
+        expect_equal output, expected
+      end
 
-        expect_equal output, [
-          '<div class="form-group error" id="error_person_name">',
-          '<label class="form-label" for="person_name">',
-          'Full name',
-          '<span class="error-message" id="error_message_person_name">',
-          "Full name is required",
-          '</span>',
-          '</label>',
-          %'<#{element_for(method)} aria-describedby="error_message_person_name" class="form-control" #{type_for(method, type)}name="person[name]" id="person_name" />',
-          '</div>'
-        ]
+      it 'outputs custom error message format in span inside label' do
+        translations = YAML.load(%'
+            errors:
+              format: "%{message}"
+            activemodel:
+              errors:
+                models:
+                  person:
+                    attributes:
+                      name:
+                        blank: "Enter your full name"
+        ')
+        with_translations(:en, translations) do
+          resource.valid?
+          output = builder.send method, :name
+          expected = expected_error_html method, type, 'person_name',
+            'person[name]', 'Name', 'Enter your full name'
+          expect_equal output, expected
+        end
       end
     end
 
@@ -146,17 +159,9 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
           f.send method, :postcode
         end
 
-        expect_equal output, [
-          '<div class="form-group error" id="error_person_address_attributes_postcode">',
-          '<label class="form-label" for="person_address_attributes_postcode">',
-          'Postcode',
-          '<span class="error-message" id="error_message_person_address_attributes_postcode">',
-          "Postcode is required",
-          '</span>',
-          '</label>',
-          %'<#{element_for(method)} aria-describedby="error_message_person_address_attributes_postcode" class="form-control" #{type_for(method, type)}name="person[address_attributes][postcode]" id="person_address_attributes_postcode" />',
-          '</div>'
-        ]
+        expected = expected_error_html method, type, 'person_address_attributes_postcode',
+          'person[address_attributes][postcode]', 'Postcode', 'Postcode is required'
+        expect_equal output, expected
       end
     end
 
@@ -172,20 +177,26 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
           end
         end
 
-        expect_equal output, [
-          '<div class="form-group error" id="error_person_address_attributes_country_attributes_name">',
-          '<label class="form-label" for="person_address_attributes_country_attributes_name">',
-          'Country',
-          '<span class="error-message" id="error_message_person_address_attributes_country_attributes_name">',
-          "Country is required",
-          '</span>',
-          '</label>',
-          %'<#{element_for(method)} aria-describedby="error_message_person_address_attributes_country_attributes_name" class="form-control" #{type_for(method, type)}name="person[address_attributes][country_attributes][name]" id="person_address_attributes_country_attributes_name" />',
-          '</div>'
-        ]
+        expected = expected_error_html method, type, 'person_address_attributes_country_attributes_name',
+          'person[address_attributes][country_attributes][name]', 'Country', 'Country is required'
+        expect_equal output, expected
       end
     end
 
+  end
+
+  def expected_error_html method, type, attribute, name_value, label, error
+    [
+      %'<div class="form-group error" id="error_#{attribute}">',
+      %'<label class="form-label" for="#{attribute}">',
+      label,
+      %'<span class="error-message" id="error_message_#{attribute}">',
+      error,
+      '</span>',
+      '</label>',
+      %'<#{element_for(method)} aria-describedby="error_message_#{attribute}" class="form-control" #{type_for(method, type)}name="#{name_value}" id="#{attribute}" />',
+      '</div>'
+    ]
   end
 
   describe '#text_field' do

@@ -4,6 +4,7 @@ require 'spec_helper'
 class TestHelper < ActionView::Base; end
 
 RSpec.describe GovukElementsFormBuilder::FormBuilder do
+  include TranslationHelper
 
   it "should have a version" do
     expect(GovukElementsFormBuilder::VERSION).to eq("0.0.1")
@@ -125,6 +126,27 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
         expected = expected_error_html method, type, 'person_name',
           'person[name]', 'Full name', 'Full name is required'
         expect_equal output, expected
+      end
+
+      it 'outputs custom error message format in span inside label' do
+        translations = YAML.load(%'
+            errors:
+              format: "%{message}"
+            activemodel:
+              errors:
+                models:
+                  person:
+                    attributes:
+                      name:
+                        blank: "Enter your full name"
+        ')
+        with_translations(:en, translations) do
+          resource.valid?
+          output = builder.send method, :name
+          expected = expected_error_html method, type, 'person_name',
+            'person[name]', 'Name', 'Enter your full name'
+          expect_equal output, expected
+        end
       end
     end
 

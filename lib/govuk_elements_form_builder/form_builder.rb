@@ -12,9 +12,8 @@ module GovukElementsFormBuilder
     end
 
     # Ensure fields_for yields a GovukElementsFormBuilder.
-    def fields_for attribute, *args
-      options = args.extract_options!
-      super attribute, options.merge(builder: self.class)
+    def fields_for record_name, record_object = nil, fields_options = {}, &block
+      super record_name, record_object, fields_options.merge(builder: self.class), &block
     end
 
     %i[

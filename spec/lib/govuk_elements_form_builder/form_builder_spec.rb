@@ -104,8 +104,7 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
 
     context 'when fields_for used' do
       it 'outputs label and input with correct ids' do
-        resource.address = Address.new
-        output = builder.fields_for(:address) do |f|
+        output = builder.fields_for(:address, Address.new) do |f|
           f.send method, :postcode
         end
         expect_equal output, [

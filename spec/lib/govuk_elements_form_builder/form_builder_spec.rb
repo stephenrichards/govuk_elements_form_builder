@@ -347,7 +347,7 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
 
     it 'outputs select lists with labels and hints' do
       @location = [:ni, :isle_of_man_channel_islands]
-      output = builder.collection_select :location, @location , :to_s, :to_s
+      output = builder.collection_select :location, @location , :to_s, :to_s, {}
       expect_equal output, [
           '<div class="form-group">',
           '<label class="form-label" for="person_location">',

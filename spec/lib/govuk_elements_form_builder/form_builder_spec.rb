@@ -386,5 +386,27 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
           '</div>'
       ]
     end
+    it 'includes blanks' do
+      @gender = [:male, :female]
+      output = builder.collection_select :gender, @gender , :to_s, :to_s, {include_blank: "Please select an option"}, {class: "my-custom-style"}
+      expect_equal output, [
+          '<div class="form-group">',
+          '<label class="form-label" for="person_gender">',
+          'Gender',
+          '</label>',
+          %'<select class="form-control my-custom-style" name="person[gender]" id="person_gender">',
+          %'<option value="">',
+          'Please select an option',
+          %'</option>',
+          %'<option value="male">',
+          'male',
+          %'</option>',
+          %'<option value="female">',
+          'female',
+          %'</option>',
+          %'</select>',
+          '</div>'
+      ]
+    end
   end
 end

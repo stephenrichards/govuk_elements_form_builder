@@ -65,7 +65,7 @@ module GovukElementsFormBuilder
         options = args.extract_options!
         set_field_classes! options
 
-        label = label(method, class: "form-label").html_safe
+        label = label(method, class: "form-label")
         add_hint :label, label, method
 
         (label+ super(method, collection, value_method, text_method, {}, options)).html_safe

@@ -11,6 +11,7 @@ class Person
   attr_accessor :password
   attr_accessor :password_confirmation
   attr_accessor :waste_transport
+  attr_accessor :gender
 
   validates_presence_of :name
 

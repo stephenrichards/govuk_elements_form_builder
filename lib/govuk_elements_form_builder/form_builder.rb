@@ -58,6 +58,21 @@ module GovukElementsFormBuilder
       end
     end
 
+    def collection_select method, collection, value_method, text_method, options = {}, *args
+
+      content_tag :div, class: form_group_classes(method), id: form_group_id(method) do
+
+        html_options = args.extract_options!
+        set_field_classes! html_options
+
+        label = label(method, class: "form-label")
+        add_hint :label, label, method
+
+        (label+ super(method, collection, value_method, text_method, options , html_options)).html_safe
+      end
+
+    end
+
     private
 
     def set_field_classes! options

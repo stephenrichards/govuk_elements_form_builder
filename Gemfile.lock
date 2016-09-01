@@ -67,6 +67,7 @@ GEM
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
+    htmlbeautifier (1.1.1)
     i18n (0.7.0)
     json (1.8.3)
     listen (3.0.6)
@@ -133,6 +134,9 @@ GEM
     rspec-expectations (3.2.1)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.2.0)
+    rspec-html-matchers (0.8.0)
+      nokogiri (~> 1)
+      rspec (>= 3.0.0.a, < 4)
     rspec-mocks (3.2.1)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.2.0)
@@ -167,8 +171,10 @@ DEPENDENCIES
   byebug
   govuk_elements_form_builder!
   guard-rspec
+  htmlbeautifier
+  rspec-html-matchers
   rspec-rails
   sqlite3
 
 BUNDLED WITH
-   1.12.3
+   1.12.5

@@ -21,15 +21,15 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
     expect(split_output).to eq split_expected
   end
 
+  def element_for(method)
+    method == :text_area ? 'textarea' : 'input'
+  end
+
+  def type_for(method, type)
+    method == :text_area ? '' : %'type="#{type}" '
+  end
+
   shared_examples_for 'input field' do |method, type|
-
-    def element_for(method)
-      method == :text_area ? 'textarea' : 'input'
-    end
-
-    def type_for(method, type)
-      method == :text_area ? '' : %'type="#{type}" '
-    end
 
     def size(method, size)
       method == :text_area ? '' : %'size="#{size}" '
@@ -183,24 +183,25 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
       end
     end
 
-    context 'when mixing the rendering order of nested builders' do
-      it 'outputs error messages in span inside label' do
-        resource.address = Address.new
-        resource.address.valid?
-        resource.valid?
+  end
 
-        # Render the postcode first
-        builder.fields_for(:address) do |address|
-          address.send method, :postcode
-        end
+  context 'when mixing the rendering order of nested builders' do
+    let(:method) { :text_field }
+    let(:type) { :text }
+    it 'outputs error messages in span inside label' do
+      resource.address = Address.new
+      resource.address.valid?
+      resource.valid?
 
-        output = builder.send method, :name
-
-
-        expected = expected_error_html method, type, 'person_name',
-          'person[name]', 'Full name', 'Full name is required'
-        expect_equal output, expected
+      # Render the postcode first
+      builder.fields_for(:address) do |address|
+        address.text_field :postcode
       end
+      output = builder.text_field :name
+
+      expected = expected_error_html :text_field, :text, 'person_name',
+        'person[name]', 'Full name', 'Full name is required'
+      expect_equal output, expected
     end
   end
 

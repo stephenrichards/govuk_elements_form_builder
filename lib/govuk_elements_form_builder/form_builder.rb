@@ -1,15 +1,12 @@
 module GovukElementsFormBuilder
   class FormBuilder < ActionView::Helpers::FormBuilder
 
+    ActionView::Base.field_error_proc = Proc.new do |html_tag, instance|
+      add_error_to_html_tag! html_tag, instance
+    end
+
     delegate :content_tag, :tag, :safe_join, to: :@template
     delegate :errors, to: :@object
-
-    def initialize *args
-      ActionView::Base.field_error_proc = Proc.new do |html_tag, instance|
-        add_error_to_html_tag! html_tag
-      end
-      super
-    end
 
     # Ensure fields_for yields a GovukElementsFormBuilder.
     def fields_for record_name, record_object = nil, fields_options = {}, &block
@@ -144,10 +141,13 @@ module GovukElementsFormBuilder
       fieldset_options
     end
 
-    def add_error_to_html_tag! html_tag
+    private_class_method def self.add_error_to_html_tag! html_tag, instance
+      object_name = instance.instance_variable_get(:@object_name)
+      object = instance.instance_variable_get(:@object)
+
       case html_tag
       when /^<label/
-        add_error_to_label! html_tag
+        add_error_to_label! html_tag, object_name, object
       when /^<input/
         add_error_to_input! html_tag, 'input'
       when /^<textarea/
@@ -157,18 +157,22 @@ module GovukElementsFormBuilder
       end
     end
 
+    def self.attribute_prefix object_name
+      object_name.to_s.tr('[]','_').squeeze('_').chomp('_')
+    end
+
     def attribute_prefix
-      @object_name.to_s.tr('[]','_').squeeze('_').chomp('_')
+      self.class.attribute_prefix(@object_name)
     end
 
     def form_group_id attribute
       "error_#{attribute_prefix}_#{attribute}" if error_for? attribute
     end
 
-    def add_error_to_label! html_tag
+    private_class_method def self.add_error_to_label! html_tag, object_name, object
       field = html_tag[/for="([^"]+)"/, 1]
-      object_attribute = object_attribute_for field
-      message = error_full_message_for object_attribute
+      object_attribute = object_attribute_for field, object_name
+      message = error_full_message_for object_attribute, object_name, object
       if message
         html_tag.sub(
           '</label',
@@ -179,7 +183,7 @@ module GovukElementsFormBuilder
       end
     end
 
-    def add_error_to_input! html_tag, element
+    private_class_method def self.add_error_to_input! html_tag, element
       field = html_tag[/id="([^"]+)"/, 1]
       html_tag.sub(
         element,
@@ -194,18 +198,22 @@ module GovukElementsFormBuilder
       classes
     end
 
+    def self.error_full_message_for attribute, object_name, object
+      message = object.errors.full_messages_for(attribute).first
+      message&.sub default_label(attribute), localized_label(attribute, object_name)
+    end
+
     def error_full_message_for attribute
-      message = errors.full_messages_for(attribute).first
-      message&.sub default_label(attribute), localized_label(attribute)
+      self.class.error_full_message_for attribute, @object_name, @object
     end
 
     def error_for? attribute
       errors.messages.key?(attribute) && !errors.messages[attribute].empty?
     end
 
-    def object_attribute_for field
+    private_class_method def self.object_attribute_for field, object_name
       field.to_s.
-        sub("#{attribute_prefix}_", '').
+        sub("#{attribute_prefix(object_name)}_", '').
         to_sym
     end
 
@@ -224,19 +232,32 @@ module GovukElementsFormBuilder
       localized 'helpers.hint', attribute, ''
     end
 
-    def default_label attribute
+    def self.default_label attribute
       attribute.to_s.split('.').last.humanize.capitalize
     end
 
-    def localized_label attribute
-      localized 'helpers.label', attribute, default_label(attribute)
+    def default_label attribute
+      self.class.default_label attribute
     end
 
-    def localized scope, attribute, default
+    def self.localized_label attribute, object_name
+      localized 'helpers.label', attribute, default_label(attribute), object_name
+    end
+
+    def localized_label attribute
+      self.class.localized_label attribute, @object_name
+    end
+
+    def self.localized scope, attribute, default, object_name
       key = "#{object_name}.#{attribute}"
       I18n.t(key,
         default: default,
         scope: scope).presence
     end
+
+    def localized scope, attribute, default
+      self.class.localized scope, attribute, default, @object_name
+    end
+
   end
 end

@@ -41,20 +41,28 @@ module GovukElementsFormBuilder
     end
 
     def radio_button_fieldset attribute, options={}
-      content_tag :fieldset, fieldset_options(options) do
-        safe_join([
-          fieldset_legend(attribute),
-          radio_inputs(attribute, options)
-        ], "\n")
+      content_tag :div,
+                  class: form_group_classes(attribute),
+                  id: form_group_id(attribute) do
+        content_tag :fieldset, fieldset_options(attribute, options) do
+          safe_join([
+                      fieldset_legend(attribute),
+                      radio_inputs(attribute, options)
+                    ], "\n")
+        end
       end
     end
 
-    def check_box_fieldset legend_key, attributes
-      content_tag :fieldset, fieldset_options(options) do
-        safe_join([
-          fieldset_legend(legend_key),
-          check_box_inputs(attributes)
-        ], "\n")
+    def check_box_fieldset legend_key, attributes, options={}
+      content_tag :div,
+                  class: form_group_classes(attributes),
+                  id: form_group_id(attributes) do
+        content_tag :fieldset, fieldset_options(attributes, options) do
+          safe_join([
+                      fieldset_legend(legend_key),
+                      check_box_inputs(attributes)
+                    ], "\n")
+        end
       end
     end
 
@@ -112,7 +120,7 @@ module GovukElementsFormBuilder
       legend.html_safe
     end
 
-    def fieldset_options options
+    def fieldset_options attributes, options
       fieldset_options = {}
       fieldset_options[:class] = 'inline' if options[:inline] == true
       fieldset_options

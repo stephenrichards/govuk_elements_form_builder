@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'rails_helper'
 require 'spec_helper'
 
@@ -242,6 +243,7 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
     it 'outputs radio buttons wrapped in labels' do
       output = builder.radio_button_fieldset :location, choices: [:ni, :isle_of_man_channel_islands, :british_abroad]
       expect_equal output, [
+        '<div class="form-group">',
         '<fieldset>',
         '<legend class="heading-medium">',
         'Where do you live?',
@@ -261,13 +263,15 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
         '<input type="radio" value="british_abroad" name="person[location]" id="person_location_british_abroad" />',
         'I am a British citizen living abroad',
         '</label>',
-        '</fieldset>'
+        '</fieldset>',
+        '</div>'
       ]
     end
 
     it 'outputs yes/no choices when no choices specified, and adds "inline" class to fieldset when passed "inline: true"' do
       output = builder.radio_button_fieldset :has_user_account, inline: true
       expect_equal output, [
+        '<div class="form-group">',
         '<fieldset class="inline">',
         '<legend class="heading-medium">',
         'Do you already have a personal user account?',
@@ -280,7 +284,8 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
         '<input type="radio" value="no" name="person[has_user_account]" id="person_has_user_account_no" />',
         'No',
         '</label>',
-        '</fieldset>'
+        '</fieldset>',
+        '</div>'
       ]
     end
 
@@ -294,6 +299,7 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
       end
 
       expect_equal output, [
+        '<div class="form-group">',
         '<fieldset>',
         '<legend class="heading-medium">',
         'Which types of waste do you transport regularly?',
@@ -316,7 +322,8 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
         '<input type="checkbox" value="1" name="person[waste_transport_attributes][farm_agricultural]" id="person_waste_transport_attributes_farm_agricultural" />',
         'Farm or agricultural waste',
         '</label>',
-        '</fieldset>'
+        '</fieldset>',
+        '</div>'
       ]
     end
 

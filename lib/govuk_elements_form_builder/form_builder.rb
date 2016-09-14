@@ -115,8 +115,26 @@ module GovukElementsFormBuilder
     end
 
     def fieldset_legend attribute
-      legend = content_tag(:legend, fieldset_text(attribute), class: 'heading-medium')
-      add_hint :legend, legend, attribute
+      legend = content_tag(:legend) do
+        tags = [content_tag(
+                  :span,
+                  fieldset_text(attribute),
+                  class: 'form-label-bold'
+                )]
+
+        if error_for? attribute
+          tags << content_tag(
+            :span,
+            error_full_message_for(attribute),
+            class: 'error-message'
+          )
+        end
+
+        hint = hint_text attribute
+        tags << content_tag(:span, hint, class: 'form-hint') if hint
+
+        safe_join tags
+      end
       legend.html_safe
     end
 
@@ -151,25 +169,34 @@ module GovukElementsFormBuilder
       field = html_tag[/for="([^"]+)"/, 1]
       object_attribute = object_attribute_for field
       message = error_full_message_for object_attribute
-      html_tag.sub!('</label',
-        %'<span class="error-message" id="error_message_#{field}">#{message}</span></label')
+      if message
+        html_tag.sub(
+          '</label',
+          %Q{<span class="error-message" id="error_message_#{field}">#{message}</span></label}
+        ).html_safe # sub() returns a String, not a SafeBuffer
+      else
+        html_tag
+      end
     end
 
     def add_error_to_input! html_tag, element
       field = html_tag[/id="([^"]+)"/, 1]
-      html_tag.sub!(element, %'#{element} aria-describedby="error_message_#{field}"')
+      html_tag.sub(
+        element,
+        %Q{#{element} aria-describedby="error_message_#{field}"}
+      ).html_safe # sub() returns a String, not a SafeBuffer
     end
 
-    def form_group_classes attribute
+    def form_group_classes attributes
+      attributes = [attributes] if !attributes.respond_to? :count
       classes = 'form-group'
-      classes += ' error' if error_for? attribute
+      classes += ' error' if attributes.find { |a| error_for? a }
       classes
     end
 
     def error_full_message_for attribute
       message = errors.full_messages_for(attribute).first
-      message.sub! default_label(attribute), localized_label(attribute)
-      message
+      message&.sub default_label(attribute), localized_label(attribute)
     end
 
     def error_for? attribute

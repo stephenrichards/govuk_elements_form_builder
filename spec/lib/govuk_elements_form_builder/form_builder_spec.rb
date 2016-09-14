@@ -240,13 +240,16 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
   end
 
   describe '#radio_button_fieldset' do
+    let(:pretty_output) { HtmlBeautifier.beautify output }
     it 'outputs radio buttons wrapped in labels' do
       output = builder.radio_button_fieldset :location, choices: [:ni, :isle_of_man_channel_islands, :british_abroad]
       expect_equal output, [
         '<div class="form-group">',
         '<fieldset>',
-        '<legend class="heading-medium">',
+        '<legend>',
+        '<span class="form-label-bold">',
         'Where do you live?',
+        '</span>',
         '<span class="form-hint">',
         'Select from these options because you answered you do not reside in England, Wales, or Scotland',
         '</span>',
@@ -273,8 +276,10 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
       expect_equal output, [
         '<div class="form-group">',
         '<fieldset class="inline">',
-        '<legend class="heading-medium">',
+        '<legend>',
+        '<span class="form-label-bold">',
         'Do you already have a personal user account?',
+        '</span>',
         '</legend>',
         '<label class="block-label" for="person_has_user_account_yes">',
         '<input type="radio" value="yes" name="person[has_user_account]" id="person_has_user_account_yes" />',
@@ -289,6 +294,36 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
       ]
     end
 
+
+    context 'the resource is invalid' do
+      let(:resource) { Person.new.tap { |p| p.valid? } }
+
+      it 'outputs error messages' do
+        output = builder.radio_button_fieldset :gender
+        expect_equal output, [
+                       '<div class="form-group error" id="error_person_gender">',
+                       '<fieldset>',
+                       '<legend>',
+                       '<span class="form-label-bold">',
+                       'Gender',
+                       '</span>',
+                       '<span class="error-message">',
+                       'Gender is required',
+                       '</span>',
+                       '</legend>',
+                       '<label class="block-label" for="person_gender_yes">',
+                       '<input aria-describedby="error_message_person_gender_yes" type="radio" value="yes" name="person[gender]" id="person_gender_yes" />',
+                       'Yes',
+                       '</label>',
+                       '<label class="block-label" for="person_gender_no">',
+                       '<input aria-describedby="error_message_person_gender_no" type="radio" value="no" name="person[gender]" id="person_gender_no" />',
+                       'No',
+                       '</label>',
+                       '</fieldset>',
+                       '</div>'
+                     ]
+      end
+    end
   end
 
   describe '#check_box_fieldset' do
@@ -301,8 +336,10 @@ RSpec.describe GovukElementsFormBuilder::FormBuilder do
       expect_equal output, [
         '<div class="form-group">',
         '<fieldset>',
-        '<legend class="heading-medium">',
+        '<legend>',
+        '<span class="form-label-bold">',
         'Which types of waste do you transport regularly?',
+        '</span>',
         '<span class="form-hint">',
         'Select all that apply',
         '</span>',

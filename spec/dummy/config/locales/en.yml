@@ -48,8 +48,8 @@ en:
       person[address_attributes][country_attributes]:
         name: Country
       person[waste_transport_attributes]:
-        animal_carcasses: Waste from animal carcasses
-        mines_quarries: Waste from mines or quarries
+        animal_carcasses_html: Waste from animal carcasses<br><em>includes sloths and other Bradypodidae</em>
+        mines_quarries: Waste from mines or quarries (> 200 lbs)
         farm_agricultural: Farm or agricultural waste
     hint:
       person:

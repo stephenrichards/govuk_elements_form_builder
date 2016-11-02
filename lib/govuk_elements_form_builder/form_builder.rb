@@ -250,9 +250,13 @@ module GovukElementsFormBuilder
 
     def self.localized scope, attribute, default, object_name
       key = "#{object_name}.#{attribute}"
-      I18n.t(key,
-        default: default,
-        scope: scope).presence
+      translate key, default, scope
+    end
+
+    def self.translate key, default, scope
+      # Passes blank String as default because nil is interpreted as no default
+      I18n.translate(key, default: '', scope: scope).presence ||
+      I18n.translate("#{key}_html", default: default, scope: scope).html_safe.presence
     end
 
     def localized scope, attribute, default

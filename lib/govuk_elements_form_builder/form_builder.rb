@@ -200,7 +200,7 @@ module GovukElementsFormBuilder
 
     def self.error_full_message_for attribute, object_name, object
       message = object.errors.full_messages_for(attribute).first
-      message&.sub default_label(attribute), localized_label(attribute, object_name)
+      message.nil? ? nil : message.sub(default_label(attribute), localized_label(attribute, object_name))
     end
 
     def error_full_message_for attribute
